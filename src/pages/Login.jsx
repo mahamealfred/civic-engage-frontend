@@ -3,10 +3,13 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { FiMail, FiLock } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginAction } from '../api/UserController';
 
 const Login = () => {
   const [loginOption, setLoginOption] = useState('emailPassword');
+  const [message, setMessage] = useState(null);  // State for storing messages
+  const navigate = useNavigate();
 
   // Validation schema
   const validationSchema = Yup.object({
@@ -21,8 +24,19 @@ const Login = () => {
   };
 
   // Submit handler
-  const onSubmit = (values) => {
-    console.log('Form data', values);
+  const onSubmit = async(values) => {
+    try {
+      const response = await loginAction(values);
+      if (response.responseCode === 200) {
+        localStorage.setItem('userData', JSON.stringify(response.data));
+        setMessage({ type: 'success', text: 'Login successful!' });
+        navigate("/ecommerce");
+      } else {
+        setMessage({ type: 'error', text: response.responseDescription });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+    }
   };
 
   const handleGoogleLoginSuccess = (response) => {
@@ -38,6 +52,13 @@ const Login = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">Login</h2>
+
+          {/* Message Display */}
+          {message && (
+            <div className={`mb-4 text-center p-2 rounded-lg ${message.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>
+              {message.text}
+            </div>
+          )}
 
           <div className="flex justify-center mb-4">
             <button
@@ -119,7 +140,7 @@ const Login = () => {
           <div className="text-center mt-4">
             <p className="text-gray-700 dark:text-gray-300">
               Don't have an account?{' '}
-              <Link to="/sign-up" className="text-blue-500 over:bg-blue-700">
+              <Link to="/sign-up" className="text-blue-500 hover:text-blue-700">
                 Sign Up
               </Link>
             </p>

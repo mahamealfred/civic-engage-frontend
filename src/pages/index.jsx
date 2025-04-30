@@ -1,4 +1,4 @@
-export { default as Ecommerce } from './Ecommerce';
+export { default as Dashboard } from './Dashboard';
 export { default as Kanban } from './Kanban';
 export { default as Orders } from './Orders';
 export { default as Employees } from './Employees';
@@ -17,4 +17,16 @@ export { default as Line } from './Charts/Line';
 export { default as Pie } from './Charts/Pie';
 export { default as Pyramid } from './Charts/Pyramid';
 export { default as Stacked } from './Charts/Stacked';
-
+export { default as Issues } from './Issues';
+export { default as NewIssueForm} from './NewIssueForm';
+export { default as NewUserForm} from './NewUserForm';
+export { default as Asign} from './AsignUserForm';
+export { default as Inprogress} from './Inprogress';
+export { default as Opened } from './Opened';
+export { default as Rejected } from './Rejected';
+export { default as Category } from './Category';
+export { default as Solved } from './Solved';
+export { default as Department } from './Department';
+export { default as Feedback } from './Feedback';
+export { default as NewCategoryForm } from './NewCategoryForm';
+;

@@ -8,11 +8,15 @@ import avatar from '../data/avatar.jpg';
 import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
-  const { currentColor } = useStateContext();
+  const { currentColor, activeMenu, setActiveMenu, screenSize,userRole, setUserRole } = useStateContext();
+
   const auth = JSON.parse(localStorage.getItem('userData'));
   const navigate=useNavigate()
 const handleLogout=()=>{
   localStorage.removeItem('userData')
+  localStorage.removeItem('access-token')
+  setUserRole(null)
+  // window.location.reload();
   navigate("/login")
 }
 
@@ -40,7 +44,7 @@ const handleLogout=()=>{
           <p className="text-gray-500 text-sm font-semibold dark:text-gray-400"> {auth.email}</p>
         </div>
       </div>
-      <div>
+      {/* <div>
         {userProfileData.map((item, index) => (
           <div key={index} className="flex gap-5 border-b-1 border-color p-4 hover:bg-light-gray cursor-pointer  dark:hover:bg-[#42464D]">
             <button
@@ -57,7 +61,7 @@ const handleLogout=()=>{
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
       <div className="mt-5">
         <Button
           color="white"

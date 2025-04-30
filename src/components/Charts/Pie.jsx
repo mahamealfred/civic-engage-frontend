@@ -1,10 +1,52 @@
-import React from 'react';
-import { AccumulationChartComponent, AccumulationSeriesCollectionDirective, AccumulationSeriesDirective, AccumulationLegend, PieSeries, AccumulationDataLabel, Inject, AccumulationTooltip } from '@syncfusion/ej2-react-charts';
+import React, { useEffect, useState } from 'react';
+import {
+  AccumulationChartComponent,
+  AccumulationSeriesCollectionDirective,
+  AccumulationSeriesDirective,
+  AccumulationLegend,
+  PieSeries,
+  AccumulationDataLabel,
+  Inject,
+  AccumulationTooltip,
+} from '@syncfusion/ej2-react-charts';
 
 import { useStateContext } from '../../contexts/ContextProvider';
+import { getIssuesAction } from '../../api/issuesController';
 
-const Doughnut = ({ id, data, legendVisiblity, height }) => {
+const Doughnut = ({ id, legendVisiblity, height }) => {
   const { currentMode } = useStateContext();
+  const [pieChartData, setPieChartData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getIssuesAction();
+        const data = response.data;
+
+        // Calculate percentage distribution of statuses
+        const statusCounts = {};
+        data.forEach((item) => {
+          const status = item.status;
+          statusCounts[status] = (statusCounts[status] || 0) + 1;
+        });
+
+        const total = Object.values(statusCounts).reduce((sum, count) => sum + count, 0);
+
+        // Transform the data for the pie chart
+        const chartData = Object.keys(statusCounts).map((status) => ({
+          x: status,
+          y: statusCounts[status],
+          text: `${((statusCounts[status] / total) * 100).toFixed(1)}%`,
+        }));
+
+        setPieChartData(chartData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <AccumulationChartComponent
@@ -17,8 +59,8 @@ const Doughnut = ({ id, data, legendVisiblity, height }) => {
       <Inject services={[AccumulationLegend, PieSeries, AccumulationDataLabel, AccumulationTooltip]} />
       <AccumulationSeriesCollectionDirective>
         <AccumulationSeriesDirective
-          name="Sale"
-          dataSource={data}
+          name="Issues"
+          dataSource={pieChartData}
           xName="x"
           yName="y"
           innerRadius="40%"

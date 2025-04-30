@@ -1,22 +1,19 @@
 
-
 import React from "react";
 import axios from "axios";
 // import { Buffer } from "buffer";
 
 //Local Test APIs:
 
-const base_localhost_login = "http://localhost:5000/api/users/login";
-const base_localhost_signup = "http://localhost:5000/api/users/register";
-const base_localhost_getallusers = "http://localhost:5000/api/users/all";
+const base_localhost_getallIssues = "http://localhost:5000/api/issues";
 const base_localhost_deleteUser="http://localhost:5000/api/users/"
-const base_localhost_addUser="http://localhost:5000/api/users/new-staff"
+const base_localhost_addUser="http://localhost:5000/api/issues"
+const base_localhost_getallDepartments="http://localhost:5000/api/departments"
+const base_localhost_getallIssuesByUserId="http://localhost:5000/api/issues/creator"
 
 
-
-
-const addNewUserAction = async (values) => {
-
+const addNewAction = async (values,token) => {
+  console.log("v,t",values,token)
   const serverResponse = {
     responseCode: "",
     responseDescription: "",
@@ -25,8 +22,11 @@ const addNewUserAction = async (values) => {
    
   };
   await axios
-    .post(base_localhost_addUser,values
-    )
+    .post(base_localhost_addUser,values,{
+      headers: {
+        'Authorization': `Bearer ${token}` // Sending Bearer token
+      }
+    })
 
     .then((response) => {
     
@@ -51,7 +51,7 @@ const addNewUserAction = async (values) => {
             serverResponse.responseCode = err.response.status;
           }
           else{
-            serverResponse.responseDescription = err.response.data.error;
+            serverResponse.responseDescription = err.response.data.msg;
             serverResponse.responseCode = err.response.status;
           } 
     });
@@ -59,7 +59,7 @@ const addNewUserAction = async (values) => {
   return serverResponse;
 };
 
-const loginAction = async (values) => {
+const getIssuesAction = async() => {
   const serverResponse = {
     responseCode: "",
     responseDescription: "",
@@ -68,93 +68,12 @@ const loginAction = async (values) => {
    
   };
   await axios
-    .post(base_localhost_login,values)
-
-    .then((response) => {
-   
-      if (response.status === 200) {
-        serverResponse.responseCode = response.status;
-        serverResponse.data=response.data
-      } else {
-        serverResponse.responseDescription = response.error;
-        serverResponse.responseCode = response.status;
-      }
-    })
-    .catch((err) => {
-
-        if (err.response.status == 400) {
-            serverResponse.responseDescription = err.response.data.error;
-            serverResponse.responseCode = err.response.status;
-          }
-          else if(err.response.status == 401){
-            serverResponse.responseDescription = err.response.data.error;
-            serverResponse.responseCode = err.response.status;
-          }
-          else{
-            serverResponse.responseDescription = err.response.data.error;
-            serverResponse.responseCode = err.response.status;
-          } 
-    });
-
-  return serverResponse;
-};
-
-const registerAction = async (values) => {
-    const serverResponse = {
-      responseCode: "",
-      responseDescription: "",
-      communicationStatus: "",
-      data:""
-     
-    };
-    await axios
-      .post(base_localhost_signup,values)
-  
-      .then((response) => {
-      
-        if (response.status === 201) {
-          serverResponse.responseCode = response.status;
-          serverResponse.responseDescription = response.data.message;
-          serverResponse.data=response.data
-        } else {
-          serverResponse.responseDescription = response.error;
-          serverResponse.responseCode = response.status;
-        }
-      })
-      .catch((err) => {
-         
-          if (err.response.status == 400) {
-              serverResponse.responseDescription = err.response.data.error;
-              serverResponse.responseCode = err.response.status;
-            }
-            else if(err.response.status == 401){
-              serverResponse.responseDescription = err.response.data.error;
-              serverResponse.responseCode = err.response.status;
-            }
-            else{
-              serverResponse.responseDescription = err.response.data.error;
-              serverResponse.responseCode = err.response.status;
-            } 
-      });
-  
-    return serverResponse;
-  };
-
-  
-const getUsersAction = async () => {
-  const serverResponse = {
-    responseCode: "",
-    responseDescription: "",
-    communicationStatus: "",
-    data:""
-   
-  };
-  await axios
-    .get(base_localhost_getallusers)
+    .get( base_localhost_getallIssues)
 
     .then((response) => {
     
       if (response.status === 200) {
+   
         serverResponse.responseCode = response.status;
         serverResponse.responseDescription = response.data.message;
         serverResponse.data=response.data
@@ -182,6 +101,88 @@ const getUsersAction = async () => {
   return serverResponse;
 };
 
+const getIssuesByCreatorIDAction = async(id) => {
+  const serverResponse = {
+    responseCode: "",
+    responseDescription: "",
+    communicationStatus: "",
+    data:""
+   
+  };
+  await axios
+    .get( base_localhost_getallIssuesByUserId+"/"+id)
+
+    .then((response) => {
+    
+      if (response.status === 200) {
+   
+        serverResponse.responseCode = response.status;
+        serverResponse.responseDescription = response.data.message;
+        serverResponse.data=response.data
+      } else {
+        serverResponse.responseDescription = response.error;
+        serverResponse.responseCode = response.status;
+      }
+    })
+    .catch((err) => {
+       
+        if (err.response.status == 400) {
+            serverResponse.responseDescription = err.response.data.error;
+            serverResponse.responseCode = err.response.status;
+          }
+          else if(err.response.status == 401){
+            serverResponse.responseDescription = err.response.data.error;
+            serverResponse.responseCode = err.response.status;
+          }
+          else{
+            serverResponse.responseDescription = err.response.data.error;
+            serverResponse.responseCode = err.response.status;
+          } 
+    });
+
+  return serverResponse;
+};
+const getDepartmentAction = async() => {
+  const serverResponse = {
+    responseCode: "",
+    responseDescription: "",
+    communicationStatus: "",
+    data:""
+   
+  };
+  await axios
+    .get( base_localhost_getallDepartments)
+
+    .then((response) => {
+    
+      if (response.status === 200) {
+   
+        serverResponse.responseCode = response.status;
+        serverResponse.responseDescription = response.data.message;
+        serverResponse.data=response.data
+      } else {
+        serverResponse.responseDescription = response.error;
+        serverResponse.responseCode = response.status;
+      }
+    })
+    .catch((err) => {
+       
+        if (err.response.status == 400) {
+            serverResponse.responseDescription = err.response.data.error;
+            serverResponse.responseCode = err.response.status;
+          }
+          else if(err.response.status == 401){
+            serverResponse.responseDescription = err.response.data.error;
+            serverResponse.responseCode = err.response.status;
+          }
+          else{
+            serverResponse.responseDescription = err.response.data.error;
+            serverResponse.responseCode = err.response.status;
+          } 
+    });
+
+  return serverResponse;
+};
  
 const  deleteUserAction = async (id) => {
   const serverResponse = {
@@ -227,10 +228,9 @@ const  deleteUserAction = async (id) => {
 
 
 export {
- loginAction,
- registerAction,
- getUsersAction,
- deleteUserAction,
- addNewUserAction
+
+ getIssuesAction,
+ addNewAction,
+ getIssuesByCreatorIDAction
   
 };

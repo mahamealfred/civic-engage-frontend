@@ -25,12 +25,21 @@ const Login = () => {
 
   // Submit handler
   const onSubmit = async(values) => {
+
     try {
       const response = await loginAction(values);
       if (response.responseCode === 200) {
         localStorage.setItem('userData', JSON.stringify(response.data));
+        localStorage.setItem('access-token',response.data.token)
         setMessage({ type: 'success', text: 'Login successful!' });
-        navigate("/ecommerce");
+        if(response.data.role==="Admin"){
+          navigate("/dashboard");
+        }else if(response.data.role==="Analyst"){
+          navigate("/dashboard");
+        }else{
+          navigate("/issues");
+        }
+      
       } else {
         setMessage({ type: 'error', text: response.responseDescription });
       }
@@ -60,7 +69,7 @@ const Login = () => {
             </div>
           )}
 
-          <div className="flex justify-center mb-4">
+          {/* <div className="flex justify-center mb-4">
             <button
               className={`px-4 py-2 rounded-l-lg ${loginOption === 'emailPassword' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
               onClick={() => setLoginOption('emailPassword')}
@@ -73,7 +82,7 @@ const Login = () => {
             >
               Google Account
             </button>
-          </div>
+          </div> */}
 
           {loginOption === 'google' && (
             <div className="flex justify-center mb-4">

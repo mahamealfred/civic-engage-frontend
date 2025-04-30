@@ -5,13 +5,18 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 
 import { Navbar, Footer, Sidebar, ThemeSettings } from './components';
 import {
-  Ecommerce, Orders, Calendar, Employees, Stacked, Pyramid, Customers, Kanban, Line, Area, Bar, Pie, Financial,
-  ColorPicker, ColorMapping, Editor, Login, SignUp, LandingPage
+  Dashboard, Orders, Calendar, Employees, Stacked, Pyramid, Customers, Kanban, Line, Area, Bar, Pie, Financial,
+  ColorPicker, ColorMapping, Editor, Login, SignUp, LandingPage,Issues,NewIssueForm,NewUserForm,Asign,Inprogress,Opened, Rejected,Solved,
+  Category,
+  Department,
+  Feedback,
+  NewCategoryForm
 } from './pages';
 import './App.css';
 
-import { useStateContext } from './contexts/ContextProvider';
+import { ContextProvider, useStateContext } from './contexts/ContextProvider';
 import PrivateRoute from './PrivateRoute'; // Import the PrivateRoute component
+import NewDepartmentForm from './pages/NewDepartement';
 
 const App = () => {
   const { setCurrentColor, setCurrentMode, currentMode, activeMenu, currentColor, themeSettings, setThemeSettings } = useStateContext();
@@ -27,7 +32,8 @@ const App = () => {
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : ''}>
-      <BrowserRouter>
+        <ContextProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
@@ -73,16 +79,27 @@ const App = () => {
                       {themeSettings && <ThemeSettings />}
                       <Routes>
                         {/* dashboard */}
-                        <Route path="/ecommerce" element={<Ecommerce />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
 
                         {/* pages */}
-                        <Route path="/orders" element={<Orders />} />
-                        <Route path="/employees" element={<Employees />} />
-                        <Route path="/customers" element={<Customers />} />
-
+                        <Route path="/issues" element={<Issues/>} />
+                        <Route path="/new-issues" element={<NewIssueForm/>} />
+                        <Route path="/new-user" element={<NewUserForm/>} />
+                        <Route path="/new-department" element={<NewDepartmentForm/>}/>
+                        <Route path="/survey" element={<Employees />} />
+                        <Route path="/users" element={<Customers />} />
+                        <Route path="/asign/:issueId" element={<Asign/>} />
+                        <Route path="/inprogress" element={<Inprogress/>} />
+                        <Route path="/opened" element={<Opened/>}/>
+                        <Route path="/rejected" element={<Rejected/>}/>
+                        <Route path="/solved" element={<Solved/>}/>
+                        <Route path="/categories" element={<Category/>}/>
+                        <Route path="/departments" element={<Department/>}/>
+                        <Route path="/feedbacks" element={<Feedback/>}/>
+                        <Route path="/new-category" element={<NewCategoryForm/>} />
                         {/* apps */}
                         <Route path="/kanban" element={<Kanban />} />
-                        <Route path="/editor" element={<Editor />} />
+                        <Route path="/message" element={<Editor />} />
                         <Route path="/calendar" element={<Calendar />} />
                         <Route path="/color-picker" element={<ColorPicker />} />
 
@@ -90,7 +107,7 @@ const App = () => {
                         <Route path="/line" element={<Line />} />
                         <Route path="/area" element={<Area />} />
                         <Route path="/bar" element={<Bar />} />
-                        <Route path="/pie" element={<Pie />} />
+                        <Route path="/Issue_Status" element={<Pie />} />
                         <Route path="/financial" element={<Financial />} />
                         <Route path="/color-mapping" element={<ColorMapping />} />
                         <Route path="/pyramid" element={<Pyramid />} />
@@ -105,6 +122,8 @@ const App = () => {
           />
         </Routes>
       </BrowserRouter>
+        </ContextProvider>
+      
     </div>
   );
 };

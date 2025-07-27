@@ -12,7 +12,8 @@ import { getUsersAction } from '../api/UserController';
 import { MdOutlineSupervisorAccount } from 'react-icons/md';
 import { FiBarChart, FiPieChart } from 'react-icons/fi';
 import { HiOutlineRefresh } from 'react-icons/hi';
-import { getIssuesAction } from '../api/issuesController';
+import { getIssuesAction,getIssuesByUserIdAction } from '../api/issuesController';
+import { Dashboard } from '.';
 
 const DropDown = ({ currentMode }) => (
   <div className="w-28 border-1 border-color px-2 py-1 rounded-md">
@@ -20,8 +21,8 @@ const DropDown = ({ currentMode }) => (
   </div>
 );
 
-const Ecommerce = () => {
-  const { currentColor, currentMode } = useStateContext();
+const Dashboards = () => {
+  const { currentColor, currentMode,userId,userRole } = useStateContext();
    const [usersData, setUsersData] = useState([]);
    const [issuesData, setIssuesData] = useState([])
    const [issueCounts, setIssueCounts] = useState({
@@ -31,46 +32,70 @@ const Ecommerce = () => {
     solved: 0,
   });
 
- 
+
   const [categoryDistribution, setCategoryDistribution] = useState({});
   const [statusCount, setStatusCount] = useState({});
   
   // Fetch issues data
-  useEffect(() => {
-    const fetchIssuesData = async () => {
-      try {
-        // Replace with actual API call to fetch issues data
-        const response = await getIssuesAction();
-        if (response?.data) {
-          setIssuesData(response.data);
-
-          // Calculate category-wise distribution
-          const categoryGroups = {};
-          const statusGroups = { open: 0, 'in-progress': 0, rejected: 0,solved: 0 };
-
-          response.data.forEach((issue) => {
-            // Category Distribution
-            if (!categoryGroups[issue.category.name]) {
-              categoryGroups[issue.category.name] = 0;
-            }
-            categoryGroups[issue.category.name]++;
-
-            // Status Count
-            if (statusGroups[issue.status] !== undefined) {
-              statusGroups[issue.status]++;
-            }
-          });
-
-          setCategoryDistribution(categoryGroups);
-          setStatusCount(statusGroups);
-        }
-      } catch (error) {
-        console.error('Error fetching issues:', error);
+ useEffect(() => {
+  const fetchIssues = async () => {
+    try {
+      let response;
+      if (userRole === 'Admin') {
+        response = await getIssuesAction(); // Get all issues
+      } else {
+        response = await getIssuesByUserIdAction(userId); // Get only user-specific issues
       }
-    };
 
-    fetchIssuesData();
-  }, []);
+      if (response?.data) {
+        const data = response.data;
+        setIssuesData(data);
+
+        // Status count
+        const statusGroups = {
+          open: 0,
+          'in-progress': 0,
+          rejected: 0,
+          solved: 0,
+        };
+
+        // Category count
+        const categoryGroups = {};
+
+        data.forEach((issue) => {
+          // Count statuses
+          if (statusGroups[issue.status] !== undefined) {
+            statusGroups[issue.status]++;
+          }
+
+          // Count categories
+          const categoryName = issue.category?.name || 'Uncategorized';
+          if (!categoryGroups[categoryName]) {
+            categoryGroups[categoryName] = 0;
+          }
+          categoryGroups[categoryName]++;
+        });
+
+        setIssueCounts({
+          open: statusGroups.open,
+          inProgress: statusGroups['in-progress'],
+          rejected: statusGroups.rejected,
+          solved: statusGroups.solved,
+        });
+
+        setStatusCount(statusGroups);
+        setCategoryDistribution(categoryGroups);
+      }
+    } catch (error) {
+      console.error('Error fetching issues:', error);
+    }
+  };
+
+  if (userId && userRole) {
+    fetchIssues();
+  }
+}, [userId, userRole]);
+
 
   // Download Report Logic
   const handleDownloadReport = () => {
@@ -119,38 +144,40 @@ const Ecommerce = () => {
    useEffect(() => {
      fetchUsers();
    }, []);
-   useEffect(() => {
-    const fetchIssues = async () => {
-      try {
-        const response = await getIssuesAction();
-        if (response?.data) {
-          setIssuesData(response.data); // Save the full data
+  //  useEffect(() => {
+  //   const fetchIssues = async () => {
+  //     try {
+  //       const response = await getIssuesAction();
+  //       if (response?.data) {
+  //         setIssuesData(response.data); // Save the full data
           
-          // Count issues based on their status
-          const openIssues = response.data.filter(issue => issue.status === "open").length;
-          const inProgressIssues = response.data.filter(issue => issue.status === "in-progress").length;
-          const closedIssues = response.data.filter(issue => issue.status === "closed").length;
+  //         // Count issues based on their status
+  //         const openIssues = response.data.filter(issue => issue.status === "open").length;
+  //         const inProgressIssues = response.data.filter(issue => issue.status === "in-progress").length;
+  //         const closedIssues = response.data.filter(issue => issue.status === "closed").length;
 
-          // Update counts
-          setIssueCounts({
-            open: openIssues,
-            inProgress: inProgressIssues,
-            closed: closedIssues,
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //         // Update counts
+  //         setIssueCounts({
+  //           open: openIssues,
+  //           inProgress: inProgressIssues,
+  //           closed: closedIssues,
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    fetchIssues();
-  }, []);
+  //   fetchIssues();
+  // }, []);
 
   return (
-    <div className="mt-24">
+    <div className="mt-16">
       <div className="flex flex-wrap lg:flex-nowrap justify-center ">
-       
-        <div className="flex m-2 flex-wrap justify-center gap-1 items-center">
+       {
+        userRole==="Admin"?
+        <>
+         <div className="flex m-1 flex-wrap justify-center gap-1 items-center">
             <div  className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl ">
               <button
                 type="button"
@@ -168,7 +195,7 @@ const Ecommerce = () => {
             </div>
       
         </div>
-        <div className="flex m-2 flex-wrap justify-center gap-1 items-center">
+         <div className="flex m-1 flex-wrap justify-center gap-1 items-center">
             <div  className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl ">
               <button
                 type="button"
@@ -187,7 +214,13 @@ const Ecommerce = () => {
             </div>
       
         </div>
-        <div className="flex m-2 flex-wrap justify-center gap-1 items-center">
+        </>
+       
+        :null
+       }
+        
+       
+        <div className="flex m-1 flex-wrap justify-center gap-1 items-center">
             <div  className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl ">
               <button
                 type="button"
@@ -206,7 +239,7 @@ const Ecommerce = () => {
             </div>
       
         </div>
-        <div className="flex m-2  flex-wrap justify-center gap-1 items-center">
+        <div className="flex m-1  flex-wrap justify-center gap-1 items-center">
             <div  className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl ">
               <button
                 type="button"
@@ -225,7 +258,7 @@ const Ecommerce = () => {
             </div>
       
         </div>
-        <div className="flex m-2 flex-wrap justify-center gap-1 items-center">
+        <div className="flex m-1 flex-wrap justify-center gap-1 items-center">
             <div  className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl ">
               <button
                 type="button"
@@ -250,25 +283,7 @@ const Ecommerce = () => {
       <div className="flex gap-10 flex-wrap justify-center">
         <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 p-4 rounded-2xl md:w-780  ">
       
-          {/* <div className="flex justify-between">
-            <p className="font-semibold text-xl">Revenue Updates</p>
-            <div className="flex items-center gap-4">
-              <p className="flex items-center gap-2 text-gray-600 hover:drop-shadow-xl">
-                <span>
-                  <GoPrimitiveDot />
-                </span>
-                <span>Expense</span>
-              </p>
-              <p className="flex items-center gap-2 text-green-400 hover:drop-shadow-xl">
-                <span>
-                  <GoPrimitiveDot />
-                </span>
-                <span>Budget</span>
-              </p>
-            </div>
-          </div> */}
-          
-           
+         
           <div className="mt-10 flex gap-10 flex-wrap justify-center">
            
           <div className="border-r-1 border-color m-4 pr-10">
@@ -324,53 +339,14 @@ const Ecommerce = () => {
   
       </div>
     </div> 
-          {/* <div
-            className=" rounded-2xl md:w-400 p-4 m-3"
-            style={{ backgroundColor: currentColor }}
-          >
-            <div className="flex justify-between items-center ">
-              <p className="font-semibold text-white text-2xl">Total</p>
-
-              <div>
-                <p className="text-2xl text-white font-semibold mt-8">134</p>
-                <p className="text-gray-200">Monthly issues</p>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <SparkLine currentColor={currentColor} id="column-sparkLine" height="100px" type="Column" data={SparklineAreaData} width="320" color="rgb(242, 252, 253)" />
-            </div>
-          </div> */}
-
-          {/* <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl md:w-400 p-8 m-3 flex justify-center items-center gap-10">
-            <div>
-              <p className="text-2xl font-semibold ">57</p>
-              <p className="text-gray-400">Monthly Issues</p>
-            </div>
-
-            <div className="w-40">
-              <Pie id="pie-chart" data={ecomPieChartData} legendVisiblity={false} height="160px" />
-            </div>
-          </div> */}
         </div>
       </div>
 
-      {/* <div className="flex gap-10 m-4 flex-wrap justify-center">
-      
-        <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg p-6 rounded-2xl w-96 md:w-760">
-          <div className="flex justify-between items-center gap-2 mb-10">
-            <p className="text-xl font-semibold">Issues Overview</p>
-            <DropDown currentMode={currentMode} />
-          </div>
-          <div className="md:w-full overflow-auto">
-            <LineChart />
-          </div>
-        </div>
-      </div> */}
+     
 
      
     </div>
   );
 };
 
-export default Ecommerce;
+export default Dashboards;

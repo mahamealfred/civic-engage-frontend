@@ -12,13 +12,7 @@ const UserProfile = () => {
 
   const auth = JSON.parse(localStorage.getItem('userData'));
   const navigate=useNavigate()
-const handleLogout=()=>{
-  localStorage.removeItem('userData')
-  localStorage.removeItem('access-token')
-  setUserRole(null)
-  // window.location.reload();
-  navigate("/login")
-}
+
 
   return (
     <div className="nav-item absolute right-1 top-16 bg-white dark:bg-[#42464D] p-8 rounded-lg w-96">

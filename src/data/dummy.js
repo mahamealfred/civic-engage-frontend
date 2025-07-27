@@ -442,7 +442,7 @@ export const links = [
       {
         name: 'dashboard',
         icon: <FiShoppingBag />,
-        roles: ["Admin"]
+        roles: ["Admin","Analyst"]
       },
     ],
   },
@@ -483,7 +483,7 @@ export const links = [
       {
         name: 'inprogress',
         icon: <BsKanban />,
-        roles: ["Admin","Analyst"]
+        roles: ["Admin"]
       },
       {
         name: 'opened',
@@ -502,11 +502,11 @@ export const links = [
         icon: <BsKanban />,
         roles: ["Admin","Analyst"]
       },
-      {
-        name: 'message',
-        icon: <FiEdit />,
-        roles:  ["Admin","Analyst"]
-      },
+      // {
+      //   name: 'message',
+      //   icon: <FiEdit />,
+      //   roles:  ["Analyst"]
+      // },
     ],
   },
   {

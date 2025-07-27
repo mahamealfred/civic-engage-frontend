@@ -17,11 +17,15 @@ export const ContextProvider = ({ children }) => {
   const [activeMenu, setActiveMenu] = useState(true);
   const [isClicked, setIsClicked] = useState(initialState);
   const [userRole, setUserRole] = useState(""); 
+  const [userId,setUserId]=useState("");
+
+
    // Fetch user role from local storage on component mount
    useEffect(() => {
     const storedRole = JSON.parse(localStorage.getItem("userData"));
     if (storedRole) {
       setUserRole(storedRole.role);
+      setUserId(storedRole.id)
     }
   }, []);
 
@@ -39,7 +43,15 @@ export const ContextProvider = ({ children }) => {
 
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <StateContext.Provider value={{ currentColor, currentMode, activeMenu, screenSize, setScreenSize, handleClick, isClicked, initialState, setIsClicked, setActiveMenu, setCurrentColor, setCurrentMode, setMode, setColor, themeSettings, setThemeSettings,userRole, setUserRole  }}>
+    <StateContext.Provider value={{ 
+      currentColor, currentMode, activeMenu, screenSize,
+       setScreenSize, handleClick, isClicked, initialState, 
+       setIsClicked, setActiveMenu, setCurrentColor, setCurrentMode,
+        setMode, setColor, themeSettings, setThemeSettings,
+        userRole, setUserRole,
+        userId,
+        setUserId,
+          }}>
       {children}
     </StateContext.Provider>
   );

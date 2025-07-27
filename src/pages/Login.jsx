@@ -32,12 +32,17 @@ const Login = () => {
         localStorage.setItem('userData', JSON.stringify(response.data));
         localStorage.setItem('access-token',response.data.token)
         setMessage({ type: 'success', text: 'Login successful!' });
+       // window.location.reload();
         if(response.data.role==="Admin"){
           navigate("/dashboard");
+           window.location.reload();
         }else if(response.data.role==="Analyst"){
           navigate("/dashboard");
+           window.location.reload();
         }else{
+         
           navigate("/issues");
+           window.location.reload();
         }
       
       } else {

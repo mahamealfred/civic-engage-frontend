@@ -10,17 +10,22 @@ import {
   Tooltip,
 } from '@syncfusion/ej2-react-charts';
 import { useStateContext } from '../../contexts/ContextProvider';
-import { getIssuesAction } from '../../api/issuesController';
+import { getIssuesAction, getIssuesByUserIdAction } from '../../api/issuesController';
 
 const Stacked = ({ width, height }) => {
-  const { currentMode } = useStateContext();
+  const { currentMode,userId,userRole } = useStateContext();
   const [stackedChartData, setStackedChartData] = useState([[], [], []]);
 
   // Fetch and process data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getIssuesAction();
+        let response;
+      if (userRole === 'Admin') {
+        response = await getIssuesAction(); // Get all issues
+      } else {
+        response = await getIssuesByUserIdAction(userId); // Get only user-specific issues
+      }
         const data = response.data;
 
         // Aggregate data by status, category, and department

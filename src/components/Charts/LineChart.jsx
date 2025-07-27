@@ -11,7 +11,7 @@ import {
 } from '@syncfusion/ej2-react-charts';
 
 import { useStateContext } from '../../contexts/ContextProvider';
-import { getIssuesAction } from '../../api/issuesController';
+import { getIssuesAction, getIssuesByUserIdAction } from '../../api/issuesController';
 
 export const LinePrimaryXAxis = {
   valueType: 'DateTime',
@@ -34,14 +34,19 @@ export const LinePrimaryYAxis = {
 };
 
 const LineChart = () => {
-  const { currentMode } = useStateContext();
+  const { currentMode,userId,userRole } = useStateContext();
   const [lineChartData, setLineChartData] = useState({ departmentGroups: {}, categoryGroups: {} });
   const [filterType, setFilterType] = useState('department');
 
   useEffect(() => {
     const fetchIssues = async () => {
       try {
-        const response = await getIssuesAction();
+     let response;
+           if (userRole === 'Admin') {
+             response = await getIssuesAction(); // Get all issues
+           } else {
+             response = await getIssuesByUserIdAction(userId); // Get only user-specific issues
+           }
         if (response?.data) {
           const departmentGroups = {};
           const categoryGroups = {};

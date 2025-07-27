@@ -4,8 +4,9 @@ import { GridComponent, ColumnsDirective, ColumnDirective, Resize, Sort, Context
 import { DialogComponent } from '@syncfusion/ej2-react-popups'; // Import DialogComponent
 import { Header } from '../components';
 import Editor from "../pages/Editor";
-import { getIssuesAction } from '../api/issuesController';
+import { getIssuesAction, getIssuesByUserIdAction } from '../api/issuesController';
 import { getUsersAction } from '../api/UserController';
+import { useStateContext } from '../contexts/ContextProvider';
 
 const Inprogress = () => {
   const [dialogVisible, setDialogVisible] = useState(false);  // State to control view dialog visibility
@@ -14,6 +15,7 @@ const Inprogress = () => {
   const [issuesData, setIssuesData] = useState([])
   const [dialogAsignVisible, setDialogAsignVisible] = useState(false);
   const [usersData, setUsersData] = useState([]);
+  const {userId,userRole}=useStateContext();
   let isMounted = true;
   const navigate = useNavigate() 
   const [newIssue, setNewIssue] = useState({
@@ -26,9 +28,14 @@ const Inprogress = () => {
    
   const fetchUsers = async () => {
     try {
-      const response = await getUsersAction();
+    let response;
+          if (userRole === 'Admin') {
+            response = await getIssuesAction(); // Get all issues
+          } else {
+            response = await getIssuesByUserIdAction(userId); // Get only user-specific issues
+          }
       if (response.responseCode === 200) {
-        const staff = response.data.filter(user => user.role === 'Staff');
+        const staff = response.data.filter(user => user.role === 'Analyst');
         if (isMounted) {
         setUsersData(staff);
         }
@@ -46,7 +53,14 @@ const Inprogress = () => {
   useEffect(() => {
     const fetchIssues = async () => {
       try {
-        const response = await getIssuesAction();
+        
+       let response;
+      if (userRole === 'Admin') {
+        response = await getIssuesAction(); // Get all issues
+      } else {
+        response = await getIssuesByUserIdAction(userId); // Get only user-specific issues
+      }
+
         if (isMounted && response?.data) {
           const filteredIssues = response.data.filter(issue => issue.status === 'in-progress'); // Filter for 'in-progress' status
           setIssuesData(filteredIssues);
@@ -225,18 +239,7 @@ const gridRef = useRef(null); // Using ref to store the GridComponent
           View
         </button>
   
-        {localData?.role === 'Staff' && (
-          <button
-            onClick={() => handleAsignClick(props).then(() => {
-              // Add any success handling if needed
-            }).catch((error) => {
-              console.error("Error handling assign click: ", error);
-            })}
-            className="bg-blue-500 text-white px-2 py-1 rounded"
-          >
-            Update Status
-          </button>
-        )}
+        
   
         {localData?.role === 'Admin' && (
           <Link

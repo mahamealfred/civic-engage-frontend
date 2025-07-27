@@ -214,6 +214,7 @@ const gridRef = useRef(null); // Using ref to store the GridComponent
     return (
       <>
         <button
+        
           onClick={() => handleViewClick(props).then(() => {
             // Add any success handling if needed
           }).catch((error) => {
@@ -224,18 +225,16 @@ const gridRef = useRef(null); // Using ref to store the GridComponent
           View
         </button>
   
+       
+
         {localData?.role === 'Analyst' && (
-          <button
-            onClick={() => handleAsignClick(props).then(() => {
-              // Add any success handling if needed
-            }).catch((error) => {
-              console.error("Error handling assign click: ", error);
-            })}
-            className="bg-blue-500 text-white px-2 py-1 rounded"
-          >
-            Update Status
-          </button>
-        )}
+                  <Link
+                  to={`/message/${props._id}`}
+                    className="bg-blue-500 text-white px-2 py-1 rounded"
+                  >
+                    Feedback
+                  </Link>
+                )}
   
         {/* {localData?.role === 'Admin' && (
           <Link

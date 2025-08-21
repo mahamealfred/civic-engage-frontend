@@ -6,6 +6,7 @@ import { Header } from '../components';
 import Editor from "./Editor";
 import { getIssuesAction } from '../api/issuesController';
 import { getUsersAction } from '../api/UserController';
+import IssuesReport from '../components/IssuesReport';
 
 const Solved= () => {
   const [dialogVisible, setDialogVisible] = useState(false);  // State to control view dialog visibility
@@ -14,6 +15,7 @@ const Solved= () => {
   const [issuesData, setIssuesData] = useState([])
   const [dialogAsignVisible, setDialogAsignVisible] = useState(false);
   const [usersData, setUsersData] = useState([]);
+  const [showReport, setShowReport] = useState(false);
   let isMounted = true;
   const navigate = useNavigate() 
   const [newIssue, setNewIssue] = useState({
@@ -282,6 +284,15 @@ const handleSubmitAsign=(event)=>{
   return (
     <div className="m-2 md:m-10 mt-24 p-2 md:p-10 bg-white rounded-3xl">
       <Header category="Page" title="Issues" />
+       {/* Report Button */}
+      <div style={{ marginBottom: "15px" }}>
+        <button
+          onClick={() => setShowReport(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Generate Report
+        </button>
+      </div>
       <GridComponent
         id="gridcomp"
         dataSource={issuesData || []} 
@@ -467,7 +478,30 @@ const handleSubmitAsign=(event)=>{
 
 
       </DialogComponent>
+ {/* Modal-like Report Preview */}
+      {showReport && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-6 rounded-lg w-11/12 h-5/6 overflow-auto">
+      {/* Buttons with no-print class */}
+      <div className="no-print mb-4">
+        <button
+          onClick={() => setShowReport(false)}
+          className="bg-red-500 text-white px-3 py-1 rounded mr-2"
+        >
+          Close
+        </button>
+        <button
+          onClick={() => window.print()}
+          className="bg-green-600 text-white px-3 py-1 rounded"
+        >
+          Print
+        </button>
+      </div>
 
+      <IssuesReport  rows={issuesData} generatedBy="System Admin" />
+    </div>
+  </div>
+)}
     </div>
   );
 };

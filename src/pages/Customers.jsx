@@ -4,6 +4,7 @@ import { Header } from '../components';
 import { getUsersAction, deleteUserAction } from '../api/UserController';
 import { useNavigate } from 'react-router-dom';
 import UsersReport from '../components/UsersReport';
+import { useStateContext } from '../contexts/ContextProvider';
 
 const Customers = () => {
   const selectionsettings = { persistSelection: true, type: 'Multiple', checkboxOnly: true };
@@ -13,6 +14,7 @@ const Customers = () => {
   const [usersData, setUsersData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showReport, setShowReport] = useState(false);
+   const {userId,userRole,userName}=useStateContext();
 
   const fetchUsers = async () => {
     try {
@@ -119,7 +121,7 @@ const Customers = () => {
         </button>
       </div>
 
-      <UsersReport rows={usersData} generatedBy="System Admin" />
+      <UsersReport rows={usersData} generatedBy={userName}/>
     </div>
   </div>
 )}

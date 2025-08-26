@@ -10,16 +10,33 @@
 }
 
 .report-header {
-  text-align: center;
   position: relative;
   margin-bottom: 30px;
   border-bottom: 2px solid #004080;
   padding-bottom: 15px;
 }
 
+.report-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.report-title-block {
+  text-align: center;
+  flex: 1;
+}
+
 .report-logo {
   height: 60px;
-  margin-bottom: 10px;
+}
+
+.report-logo.left {
+  margin-right: auto;
+}
+
+.report-logo.right {
+  margin-left: auto;
 }
 
 .report-title {

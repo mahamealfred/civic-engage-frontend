@@ -18,6 +18,7 @@ export const ContextProvider = ({ children }) => {
   const [isClicked, setIsClicked] = useState(initialState);
   const [userRole, setUserRole] = useState(""); 
   const [userId,setUserId]=useState("");
+    const [userName,setUserName]=useState("");
 
 
    // Fetch user role from local storage on component mount
@@ -26,6 +27,7 @@ export const ContextProvider = ({ children }) => {
     if (storedRole) {
       setUserRole(storedRole.role);
       setUserId(storedRole.id)
+      setUserName(storedRole.firstName+" "+storedRole.lastName)
     }
   }, []);
 
@@ -51,6 +53,8 @@ export const ContextProvider = ({ children }) => {
         userRole, setUserRole,
         userId,
         setUserId,
+        userName,
+        setUserName
           }}>
       {children}
     </StateContext.Provider>

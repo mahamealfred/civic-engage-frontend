@@ -1,22 +1,30 @@
 import React from "react";
 import "./Report.css"; // CSS styles (same as I showed you earlier)
-
+import govLogo from "../assets/gov.png";
+import secondLogo from "../assets/sysLogo.png"; 
 const UsersReport = ({ rows, generatedBy }) => {
   const now = new Date().toLocaleString();
 
   return (
     <div className="report-container">
+    
       <header className="report-header">
         <div className="report-date">{now}</div>
-        {/* <img
-          src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg"
-          alt="Logo"
-          className="report-logo"
-        /> */}
-        <h1>USERS REPORT</h1>
-        <p>Generated from Users Table</p>
-        <div className="report-period">
-          <strong>Report Period:</strong> {new Date().toISOString().slice(0, 10)}
+
+        {/* Header content with flex */}
+        <div className="report-header-content">
+          <img src={govLogo} alt="Left Logo" className="report-logo left" />
+
+          <div className="report-title-block">
+            <h1>USERS REPORT</h1>
+            <p>Generated from Issues Table</p>
+            <div className="report-period">
+              <strong>Report Period:</strong>{" "}
+              {new Date().toISOString().slice(0, 10)}
+            </div>
+          </div>
+
+          <img src={secondLogo} alt="Right Logo" className="report-logo right" />
         </div>
       </header>
 

@@ -7,6 +7,7 @@ import Editor from "../pages/Editor";
 import { getIssuesAction } from '../api/issuesController';
 import { getUsersAction } from '../api/UserController';
 import IssuesReport from '../components/IssuesReport';
+import { useStateContext } from '../contexts/ContextProvider';
 const Opened = () => {
   const [dialogVisible, setDialogVisible] = useState(false);  // State to control view dialog visibility
   const [addDialogVisible, setAddDialogVisible] = useState(false);  // State to control add new issue dialog visibility
@@ -15,6 +16,7 @@ const Opened = () => {
   const [dialogAsignVisible, setDialogAsignVisible] = useState(false);
   const [usersData, setUsersData] = useState([]);
    const [showReport, setShowReport] = useState(false);
+    const {userId,userRole,userName}=useStateContext();
   let isMounted = true;
   const navigate = useNavigate() 
   const [newIssue, setNewIssue] = useState({
@@ -496,7 +498,7 @@ const handleSubmitAsign=(event)=>{
         </button>
       </div>
 
-      <IssuesReport  rows={issuesData} generatedBy="System Admin" />
+      <IssuesReport  rows={issuesData} generatedBy={userName} />
     </div>
   </div>
 )}

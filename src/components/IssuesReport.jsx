@@ -1,5 +1,7 @@
 import React from "react";
-import "./Report.css"; // CSS styles (same as I showed you earlier)
+import "./Report.css";
+import govLogo from "../assets/gov.png";
+import secondLogo from "../assets/sysLogo.png"; // second logo
 
 const UsersReport = ({ rows, generatedBy }) => {
   const now = new Date().toLocaleString();
@@ -8,15 +10,21 @@ const UsersReport = ({ rows, generatedBy }) => {
     <div className="report-container">
       <header className="report-header">
         <div className="report-date">{now}</div>
-        {/* <img
-          src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg"
-          alt="Logo"
-          className="report-logo"
-        /> */}
-        <h1>ISSUES REPORT</h1>
-        <p>Generated from Issues Table</p>
-        <div className="report-period">
-          <strong>Report Period:</strong> {new Date().toISOString().slice(0, 10)}
+
+        {/* Header content with flex */}
+        <div className="report-header-content">
+          <img src={govLogo} alt="Left Logo" className="report-logo left" />
+
+          <div className="report-title-block">
+            <h1>ISSUES REPORT</h1>
+            <p>Generated from Issues Table</p>
+            <div className="report-period">
+              <strong>Report Period:</strong>{" "}
+              {new Date().toISOString().slice(0, 10)}
+            </div>
+          </div>
+
+          <img src={secondLogo} alt="Right Logo" className="report-logo right" />
         </div>
       </header>
 
@@ -29,7 +37,6 @@ const UsersReport = ({ rows, generatedBy }) => {
               <th>Message</th>
               <th>Owner</th>
               <th>Status</th>
-              
               <th>Created At</th>
             </tr>
           </thead>
@@ -39,7 +46,9 @@ const UsersReport = ({ rows, generatedBy }) => {
                 <td>{i + 1}</td>
                 <td>{user.title}</td>
                 <td>{user.description}</td>
-                <td>{user.creator.firstName} {user.creator.firstName}</td>
+                <td>
+                  {user.creator.firstName} {user.creator.lastName}
+                </td>
                 <td>{user.status}</td>
                 <td>{new Date(user.createdAt).toLocaleDateString()}</td>
               </tr>

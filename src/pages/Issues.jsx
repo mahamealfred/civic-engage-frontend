@@ -8,6 +8,7 @@ import { getIssuesAction, getIssuesByCreatorIDAction } from '../api/issuesContro
 import { getUsersAction } from '../api/UserController';
 import image from "../data/backImage.jpg";
 import IssuesReport from '../components/IssuesReport';
+import { useStateContext } from '../contexts/ContextProvider';
 
 const Issues = () => {
   const [dialogVisible, setDialogVisible] = useState(false);  // State to control view dialog visibility
@@ -17,6 +18,7 @@ const Issues = () => {
   const [dialogAsignVisible, setDialogAsignVisible] = useState(false);
   const [usersData, setUsersData] = useState([]);
   const [showReport, setShowReport] = useState(false);
+   const {userId,userRole,userName}=useStateContext();
   let isMounted = true;
   const navigate = useNavigate()
   const [newIssue, setNewIssue] = useState({
@@ -520,7 +522,7 @@ const handleSubmitAsign=(event)=>{
         </button>
       </div>
 
-      <IssuesReport  rows={issuesData} generatedBy="System Admin" />
+      <IssuesReport  rows={issuesData} generatedBy={userName} />
     </div>
   </div>
 )}

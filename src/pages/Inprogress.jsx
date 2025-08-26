@@ -15,7 +15,7 @@ const Inprogress = () => {
   const [issuesData, setIssuesData] = useState([])
   const [dialogAsignVisible, setDialogAsignVisible] = useState(false);
   const [usersData, setUsersData] = useState([]);
-  const {userId,userRole}=useStateContext();
+  const {userId,userRole,userName}=useStateContext();
     const [showReport, setShowReport] = useState(false);
   let isMounted = true;
   const navigate = useNavigate() 
@@ -503,7 +503,7 @@ const handleSubmitAsign=(event)=>{
         </button>
       </div>
 
-      <IssuesReport  rows={issuesData} generatedBy="System Admin" />
+      <IssuesReport  rows={issuesData} generatedBy={userName} />
     </div>
   </div>
 )}

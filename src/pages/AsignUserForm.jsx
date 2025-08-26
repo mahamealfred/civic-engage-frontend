@@ -23,7 +23,7 @@ const AsignForm = () => {
   const handleAssignIssue = async (event) => {
     event.preventDefault();
     const token = localStorage.getItem('access-token');
-
+console.log("Event ...")
     try {
       const response = await assignIssueToUserAction(issueId, newIssue.department);
 
@@ -41,6 +41,7 @@ const AsignForm = () => {
         setTimeout(() => setMessage(null), 3000);
         // Optional: navigate('/issues');
       } else {
+        console.log("Event error ...",response)
         setMessage({ type: 'error', text: response.responseDescription || 'Something went wrong.' });
         setTimeout(() => setMessage(null), 3000);
       }
